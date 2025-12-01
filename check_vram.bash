@@ -1,0 +1,1 @@
+watch -n 1 "rocm-smi --showmeminfo vram | awk '/VRAM Total Memory/ {total=\$NF/1024/1024/1024} /VRAM Total Used Memory/ {used=\$NF/1024/1024/1024} END{printf \"VRAM: %.2f GB used / %.2f GB total (%.2f GB free)\n\", used, total, total-used}'"
