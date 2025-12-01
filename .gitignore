@@ -25,3 +25,5 @@ vids/
 
 stylegan3/results
 dataset_preprocessing
+
+networks/model_ir_se50.pth
