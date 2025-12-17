@@ -25,18 +25,16 @@ for i, name in gpu_info:
 gpu_ids_str = ",".join(str(i) for i, _ in gpu_info)
 
 # Parameters
-pre_iterations = 30
-post_iterations = 30
-dif_mult = 1 #higher numbers require more vram
+pre_iterations = 400
+post_iterations = 200
+dif_mult = 2 #higher numbers require more vram
 video_mult = 3
 output_dir = "./output/"
 
 image_ids = ["001"]
 input_dict = {
-        "text": "A human being", 
         "lamda_id": 1.0, #0.2, 
         "lamda_origin": 1.0, #0.2, 
-        "lamda_diffusion": 0.0, #1.3e-5, 
         "lamda_illumination": 0.0
 }
 
@@ -50,7 +48,7 @@ for image_id in image_ids:
 
     command = (
         f"PYTHONWARNINGS=\"ignore\" "
-        f"CUDA_VISIBLE_DEVICES={gpu_ids_str} python run.py "
+        f"CUDA_VISIBLE_DEVICES={gpu_ids_str} python fine_tune_latent_space.py "
         f"--outdir='{output_dir}' "
         f"--network='{network_path}' "
         f"--sample_mult={dif_mult} "
@@ -58,10 +56,8 @@ for image_id in image_ids:
         f"--c_path ./test_data/{image_id}.npy "
         f"--num_steps {pre_iterations} "
         f"--num_steps_pti {post_iterations} "
-        f"--description '{input_dict['text']}' "
         f"--lamda_id {input_dict['lamda_id']} "
         f"--lamda_origin {input_dict['lamda_origin']} "
-        f"--lamda_diffusion {input_dict['lamda_diffusion']} "
         f"--lamda_illumination {input_dict['lamda_illumination']}"
     )
     print(command)
@@ -71,23 +67,24 @@ for image_id in image_ids:
     print("")
     print("")
 
-
-
-    output_dir_video = os.path.join(
+    output_dir_image = os.path.join(
         output_dir,
-        f"{image_id}_{input_dict['text'].replace(' ', '_')}_{input_dict['lamda_id']}_{input_dict['lamda_origin']}_{input_dict['lamda_diffusion']}_{input_dict['lamda_illumination']}",
+        f"{image_id}_"
+        f"{input_dict['lamda_id']}_{input_dict['lamda_origin']}_"
+        f"{input_dict['lamda_illumination']}"
     )
 
-    video_command = (
+    render_command = (
         f"PYTHONWARNINGS=\"ignore\" "
-        f"python gen_videos_from_given_latent_code.py "
-        f"--outdir='{output_dir_video}' "
-        f"--trunc=0.7 "
-        f"--npy_path '{output_dir_video}/checkpoints/{image_id}.npy' "
-        f"--network='{output_dir_video}/checkpoints/fintuned_generator.pkl' "
-        f"--sample_mult={video_mult}"
+        f"python gen_image_from_latent_code.py "
+        f"--outdir '{output_dir_image}' "
+        f"--network '{output_dir_image}/checkpoints/fintuned_generator.pkl' "
+        f"--latent '{output_dir_image}/checkpoints/{image_id}.npy' "
+        f"--pose './test_data/{image_id}.npy' "
+        f"--trunc 0.7 "
+        f"--sample-mult 3"
     )
 
-    print(video_command)
-    os.system(video_command)
-    
+    print(render_command)
+    os.system(render_command)
+    print("RENDERED IMAGE WITH ORIGINAL POSE:", time.ctime())    
