@@ -32,16 +32,14 @@ video_mult = 3
 output_dir = "./output/"
 
 image_ids = ["001", "002"]
-input_dict = [
-    {
+input_dict = {
         "text": "A human being", 
         "lamda_id": 1.0, #0.2, 
         "lamda_origin": 1.0, #0.2, 
         "lamda_diffusion": 0.0, #1.3e-5, 
         "lamda_illumination": 0.0
-     
-    }
-]
+}
+
 
 network_path = "./networks/ffhqrebalanced512-128.pkl"
 
