@@ -31,7 +31,7 @@ dif_mult = 1 #higher numbers require more vram
 video_mult = 3
 output_dir = "./output/"
 
-image_ids = ["001", "002"]
+image_ids = ["001"]
 input_dict = {
         "text": "A human being", 
         "lamda_id": 1.0, #0.2, 
